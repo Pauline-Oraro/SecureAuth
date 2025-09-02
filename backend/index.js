@@ -13,6 +13,9 @@ dotenv.config();
 //port
 const PORT = process.env.PORT || 3000;
 
+//parse incoming requests with JSON
+app.use(express.json());
+
 app.get("/", (req, res) => {
     res.send("SecureAuth!!!");
 
