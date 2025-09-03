@@ -98,7 +98,9 @@ export const login = (req, res) => {
     res.send('Login Page');
 }
 
+
 //implementing the logout function
 export const logout = (req, res) => {
-    res.send('Logout Page');
+    res.clearCookie("token");
+	res.status(200).json({ success: true, message: "Logged out successfully" });
 }
