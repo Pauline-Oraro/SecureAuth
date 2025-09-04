@@ -94,8 +94,46 @@ export const verifyEmail = async (req, res) => {
 
 
 //implementing the login function
-export const login = (req, res) => {
-    res.send('Login Page');
+export const login = async (req, res) => {
+    //get the email and password from the request body
+    const { email, password } = req.body;
+
+    try{
+        //find the user with the given email
+        const user = await User.findOne({ email });
+
+        //not found the user
+        if(!user){
+            return res.status(400).json({ success: false, message: "Invalid email" });
+        }
+
+        //compare the password with the hashed password
+        const isPasswordValid = await bcryptjs.compare(password, user.password);
+
+        //if password is not valid
+        if(!isPasswordValid){
+            return res.status(400).json({ success: false, message: "Invalid password" });
+        }
+
+        generateTokenAndSetCookie(res, user._id);
+        user.lastLogin = new Date();
+
+        //save user to the database
+        await user.save();
+
+        res.status(200).json({
+			success: true,
+			message: "Logged in successfully",
+			user: {
+				...user._doc,
+				password: undefined,
+			},
+		});
+
+    }
+    catch(error){
+        res.status(400).json({ success: false, message: error.message });
+    }
 }
 
 
