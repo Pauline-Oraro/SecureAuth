@@ -2,7 +2,7 @@ import { User } from "../models/user.model.js";
 import bcryptjs from "bcryptjs";
 import crypto from "crypto"
 import { generateTokenAndSetCookie } from "../utils/generateTokenAndSetCookie.js";
-import { sendPasswordResetEmail, sendVerificationEmail, sendWelcomeEmail } from "../mailtrap/emails.js";
+import { sendPasswordResetEmail, sendResetSuccessEmail, sendVerificationEmail, sendWelcomeEmail } from "../mailtrap/emails.js";
 
 //implementing the signup function
 export const signup = async (req, res) => { 
@@ -177,5 +177,45 @@ export const forgotPassword = async (req, res) => {
 
     catch(error){
         res.status(400).json({ success: false, message: error.message });
+    }
+}
+
+//reset password function
+export const resetPassword = async (req, res) => {
+    try {
+        //get token
+        const {token} = req.params;
+        //get password from the request body
+        const {password} = req.body;
+
+        //find user by reset token
+        const user = await User.findOne({
+            resetPasswordToken: token,
+            resetPasswordExpiresAt: { $gt: Date.now() }
+        })
+
+        //if user does not exist
+        if(!user){
+            return res.status(400).json({ success: false, message: "Invalid or Expired token" });
+        }
+
+        //if user is found update the password
+        //hash the password
+        const hashedPassword = await bcryptjs.hash(password, 10);
+
+        //save to the database
+        user.password = hashedPassword;
+        user.resetPasswordToken = undefined;
+        user.resetPasswordExpiresAt = undefined;
+        await user.save();
+
+        //reset success email
+        await sendResetSuccessEmail(user.email);
+        res.status(200).json({ success: true, message: "Password reset successful" });
+    }
+
+    catch(error){
+        console.log("Error in resetPassword ", error);
+		res.status(400).json({ success: false, message: error.message });
     }
 }
