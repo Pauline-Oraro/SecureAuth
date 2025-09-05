@@ -1,6 +1,7 @@
 import express from "express"
 import dotenv from "dotenv"
 import mongoose from "mongoose";
+import cookieParser from "cookie-parser";
 
 import authRoutes from "./routes/auth.route.js"
 
@@ -15,6 +16,9 @@ const PORT = process.env.PORT || 3000;
 
 //parse incoming requests with JSON
 app.use(express.json());
+
+//parse incoming cookies
+app.use(cookieParser());
 
 app.get("/", (req, res) => {
     res.send("SecureAuth!!!");
