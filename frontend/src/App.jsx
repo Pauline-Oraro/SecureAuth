@@ -2,6 +2,8 @@ import { Routes, Route } from "react-router-dom"
 import FloatingShape from "./components/FloatingShape.jsx"
 import SignUpPage from "./pages/SignUpPage.jsx"
 import LoginPage from "./pages/LoginPage.jsx"
+import ForgotPasswordPage from "./pages/ForgotPasswordPage.jsx"
+import EmailVerificationPage from "./pages/EmailVerificationPage.jsx"
 
 function App() {
   
@@ -37,6 +39,8 @@ function App() {
        
         <Route path="/signup" element={<SignUpPage />} />
         <Route path="/login" element={<LoginPage />} />
+        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+        <Route path="/verify-email" element={<EmailVerificationPage />} />
       </Routes>
 
     </div>
