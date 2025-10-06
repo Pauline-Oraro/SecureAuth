@@ -1,5 +1,6 @@
 import express from "express"
 import dotenv from "dotenv"
+import cors from "cors"
 import mongoose from "mongoose";
 import cookieParser from "cookie-parser";
 
@@ -13,6 +14,12 @@ dotenv.config();
 
 //port
 const PORT = process.env.PORT || 3000;
+
+//cors middleware
+app.use(cors({
+    origin: 'http://localhost:5173', //frontend origin
+    credentials: true, //allow cookies to be sent
+}));
 
 //parse incoming requests with JSON
 app.use(express.json());
